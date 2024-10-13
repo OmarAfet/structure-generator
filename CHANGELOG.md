@@ -4,6 +4,10 @@ All notable changes to the "structure-generator" extension will be documented in
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.0.7] - 2024-10-13
+
+Recreate the Extension with esbuild instead of webpack.
+
 ## [1.0.6] - 2024-10-13
 
 ### Added
