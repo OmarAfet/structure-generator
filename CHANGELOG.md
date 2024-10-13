@@ -21,7 +21,7 @@ All notable changes to the [Structure Generator extension](https://marketplace.v
 Recreate the Extension with npm instead of pnpm.
 
 ## [1.0.7] - 2024-10-13
-	
+
 Recreate the Extension with esbuild & pnpm instead of webpack.
 
 ## [1.0.6] - 2024-10-13
