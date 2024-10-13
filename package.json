@@ -53,6 +53,11 @@
             "src"
           ],
           "description": "Specific files and folders to include in the structure."
+        },
+        "structureGenerator.showPatterns": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show include and exclude patterns at the top of the generated structure."
         }
       }
     }

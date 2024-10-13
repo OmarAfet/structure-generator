@@ -1,73 +1,75 @@
-import * as fs from "fs";
+import { promises as fs } from "fs";
 import { minimatch } from "minimatch";
 import * as path from "path";
 import * as vscode from "vscode";
 
 /**
- * This method is called when the extension is activated.
- * It registers the "structure-generator.generateStructure" command.
+ * Activates the extension and registers the command.
  *
  * @param context - The context in which the extension is activated.
  */
 export function activate(context: vscode.ExtensionContext) {
-  // Output a message to the console when the extension is activated
-  console.log(
-    'Congratulations, your extension "structure-generator" is now active!'
-  );
+  console.log('Extension "structure-generator" is now active!');
 
-  // Register the command "structure-generator.generateStructure"
   let disposable = vscode.commands.registerCommand(
     "structure-generator.generateStructure",
     async () => {
-      // Get the list of workspace folders
       const workspaceFolders = vscode.workspace.workspaceFolders;
       if (!workspaceFolders) {
         vscode.window.showErrorMessage("No workspace is opened.");
         return;
       }
 
-      // Get the path of the first workspace folder
       const workspacePath = workspaceFolders[0].uri.fsPath;
-
-      // Get the configuration for this extension
       const config = vscode.workspace.getConfiguration("structureGenerator");
       const excludePatterns: string[] = config.get("exclude") || [];
       const includePatterns: string[] = config.get("include") || [];
+      const showPatterns: boolean = config.get("showPatterns") || false;
 
-      // Use the Progress API to show a progress notification
-      vscode.window.withProgress(
+      await vscode.window.withProgress(
         {
           location: vscode.ProgressLocation.Notification,
           title: "Generating project structure...",
           cancellable: false,
         },
-        async (progress) => {
+        async () => {
           try {
-            console.log("Starting project structure generation...");
-            // Optionally, you can update progress here if you have multiple steps
-            // progress.report({ increment: 0 });
-
-            // Generate the directory structure as a string
-            const structure = generateDirectoryStructure(
+            const structure = await generateDirectoryStructure(
               workspacePath,
               excludePatterns,
               includePatterns
             );
 
-            // Open a new text document with the directory structure
+            let finalOutput = "";
+
+            if (showPatterns) {
+              finalOutput += "### Exclude Patterns:\n";
+              finalOutput +=
+                excludePatterns.length > 0
+                  ? excludePatterns.map((p) => `- \`${p}\``).join("\n") + "\n"
+                  : "No exclude patterns specified.\n";
+
+              finalOutput += "\n### Include Patterns:\n";
+              finalOutput +=
+                includePatterns.length > 0
+                  ? includePatterns.map((p) => `- \`${p}\``).join("\n") + "\n"
+                  : "No include patterns specified.\n";
+
+              finalOutput +=
+                "\n*You can disable this in `structureGenerator.showPatterns`*\n\n---\n\n";
+            }
+
+            finalOutput += structure;
+
             const document = await vscode.workspace.openTextDocument({
-              content: structure,
-              language: "plaintext",
+              content: finalOutput,
+              language: "markdown",
             });
 
-            // Show the document to the user
             await vscode.window.showTextDocument(document, { preview: false });
-
-            // Inform the user that the generation is done
             vscode.window.showInformationMessage(
               "Project structure generated successfully."
             );
-            console.log("Project structure generation completed.");
           } catch (error) {
             console.error("Error generating structure:", error);
             vscode.window.showErrorMessage(
@@ -81,12 +83,11 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  // Add the command to the extension's subscriptions
   context.subscriptions.push(disposable);
 }
 
 /**
- * This method is called when the extension is deactivated.
+ * Deactivates the extension.
  */
 export function deactivate() {}
 
@@ -94,34 +95,30 @@ export function deactivate() {}
  * Interface representing a directory tree node.
  */
 interface DirTree {
-  name: string; // The name of the file or directory
-  children?: DirTree[]; // Optional array of child nodes
+  name: string;
+  children?: DirTree[];
 }
 
 /**
- * Generates the directory structure starting from a given path,
- * applying include and exclude patterns, and returns it as a formatted string.
+ * Generates the directory structure as a formatted string.
  *
  * @param dirPath - The root directory path.
  * @param exclude - An array of glob patterns to exclude.
  * @param include - An array of glob patterns to include.
  * @returns The formatted directory structure as a string.
  */
-export function generateDirectoryStructure(
+async function generateDirectoryStructure(
   dirPath: string,
   exclude: string[],
   include: string[]
-): string {
-  // Initialize the directory tree with the root directory
+): Promise<string> {
   const tree: DirTree = {
     name: path.basename(dirPath),
     children: [],
   };
 
-  // Build the directory tree recursively
-  buildTree(dirPath, tree, exclude, include, "");
+  await buildTree(dirPath, tree, exclude, include, "");
 
-  // Format the directory tree into a string representation
   return formatTree(tree);
 }
 
@@ -134,39 +131,38 @@ export function generateDirectoryStructure(
  * @param include - An array of glob patterns to include.
  * @param relativePath - The relative path from the root directory.
  */
-function buildTree(
+async function buildTree(
   currentPath: string,
   tree: DirTree,
   exclude: string[],
   include: string[],
   relativePath: string
-) {
-  // Read all items (files and directories) in the current directory
-  const items = fs.readdirSync(currentPath, { withFileTypes: true });
+): Promise<void> {
+  try {
+    const items = await fs.readdir(currentPath, { withFileTypes: true });
 
-  items.forEach((item) => {
-    const itemPath = path.join(currentPath, item.name);
-    const itemRelativePath = relativePath
-      ? path.join(relativePath, item.name)
-      : item.name;
+    for (const item of items) {
+      const itemName = item.name;
+      const itemPath = path.join(currentPath, itemName);
+      const itemRelativePath = relativePath
+        ? path.join(relativePath, itemName)
+        : itemName;
 
-    // Check if the item should be excluded based on the patterns
-    if (shouldExclude(itemRelativePath, exclude, include)) {
-      return;
+      if (shouldExclude(itemRelativePath, exclude, include)) {
+        continue;
+      }
+
+      const node: DirTree = { name: itemName };
+      if (item.isDirectory()) {
+        node.children = [];
+        await buildTree(itemPath, node, exclude, include, itemRelativePath);
+      }
+
+      tree.children!.push(node);
     }
-
-    // Create a new node for the item
-    const node: DirTree = { name: item.name };
-    if (item.isDirectory()) {
-      node.children = [];
-
-      // Recursively build the tree for the subdirectory
-      buildTree(itemPath, node, exclude, include, itemRelativePath);
-    }
-
-    // Add the node to the current tree's children
-    tree.children!.push(node);
-  });
+  } catch (err) {
+    console.error(`Error reading directory ${currentPath}:`, err);
+  }
 }
 
 /**
@@ -178,40 +174,27 @@ function buildTree(
  * @param include - An array of glob patterns to include.
  * @returns True if the file should be excluded, false otherwise.
  */
-export function shouldExclude(
+function shouldExclude(
   filePath: string,
   exclude: string[],
   include: string[]
 ): boolean {
-  // If there are include patterns, check if the file matches any
   if (include.length > 0) {
     const isIncluded = include.some((pattern) =>
-      matchesPattern(filePath, pattern)
+      minimatch(filePath, pattern, { dot: true })
     );
     if (!isIncluded) {
-      // Exclude the file if it doesn't match any include patterns
       return true;
     }
   }
 
-  // If there are exclude patterns, check if the file matches any
   if (exclude.length > 0) {
-    return exclude.some((pattern) => matchesPattern(filePath, pattern));
+    return exclude.some((pattern) =>
+      minimatch(filePath, pattern, { dot: true })
+    );
   }
 
-  // Include the file by default
   return false;
-}
-
-/**
- * Checks if a file path matches a given glob pattern.
- *
- * @param filePath - The relative file path to test.
- * @param pattern - The glob pattern to match against.
- * @returns True if the file path matches the pattern, false otherwise.
- */
-export function matchesPattern(filePath: string, pattern: string): boolean {
-  return minimatch(filePath, pattern, { dot: true });
 }
 
 /**
@@ -227,33 +210,29 @@ function formatTree(
   prefix: string = "",
   isRoot: boolean = true
 ): string {
-  // Start with the root directory name
-  let result = isRoot ? `${prefix}${tree.name}/\n` : "";
+  const lines: string[] = [];
+  if (isRoot) {
+    lines.push(`${tree.name}/`);
+  }
 
   if (!tree.children) {
-    return result;
+    return lines.join("\n");
   }
 
   const lastIndex = tree.children.length - 1;
 
-  // Iterate over the child nodes
   tree.children.forEach((child, index) => {
     const isLast = index === lastIndex;
-    // Choose the appropriate connector based on the position
     const connector = isLast ? "└── " : "├── ";
-    // Update the prefix for child nodes
     const childPrefix = prefix + (isLast ? "    " : "│   ");
+    lines.push(
+      `${prefix}${connector}${child.name}${child.children ? "/" : ""}`
+    );
 
-    // Add the current child to the result string
-    result += `${prefix}${connector}${child.name}${
-      child.children ? "/" : ""
-    }\n`;
-
-    // Recursively format the child node if it has children
     if (child.children) {
-      result += formatTree(child, childPrefix, false);
+      lines.push(formatTree(child, childPrefix, false));
     }
   });
 
-  return result;
+  return lines.join("\n");
 }

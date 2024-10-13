@@ -2,6 +2,20 @@
 
 All notable changes to the [Structure Generator extension](https://marketplace.visualstudio.com/items?itemName=OmarAfet.structure-generator) will be documented in this file.
 
+## [1.1.0] - 2024-10-13
+
+### Added
+
+- Introduced `structureGenerator.showPatterns` setting (default: `true`), allowing users to display the include and exclude patterns at the top of the generated structure.
+- Users also can disable this feature via settings.
+
+### Changed
+
+- Replaced synchronous `fs` operations with asynchronous `fs.promises` methods, improving overall performance and reducing potential blocking during large directory scans.
+- Enhanced formatting of the directory structure output to show visual connectors more clearly.
+- Improved and simplified logging to the console during activation and structure generation.
+- Cleaned up and removed redundant comments in the code for better readability.
+
 ## [1.0.8] - 2024-10-13
 
 Recreate the Extension with npm instead of pnpm.
