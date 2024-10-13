@@ -1,0 +1,90 @@
+{
+  "name": "structure-generator",
+  "displayName": "Structure Generator",
+  "description": "Generates the current project's directory structure.",
+  "version": "1.0.7",
+  "engines": {
+    "vscode": "^1.94.0"
+  },
+  "categories": [
+    "Visualization",
+    "Other"
+  ],
+  "publisher": "OmarAfet",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/OmarAfet/structure-generator"
+  },
+  "homepage": "https://github.com/OmarAfet/structure-generator/blob/main/README.md",
+  "bugs": "https://github.com/OmarAfet/structure-generator/issues",
+  "license": "MIT",
+  "icon": "icon.png",
+  "activationEvents": [],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "structure-generator.generateStructure",
+        "title": "Structure Generator: Generate Project Structure"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "Structure Generator Configuration",
+      "properties": {
+        "structureGenerator.exclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "node_modules",
+            "**/.*"
+          ],
+          "description": "Files and folders to exclude from the structure."
+        },
+        "structureGenerator.include": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "src/**",
+            "src"
+          ],
+          "description": "Specific files and folders to include in the structure."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run package",
+    "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json",
+    "package": "pnpm run check-types && pnpm run lint && node esbuild.js --production",
+    "compile-tests": "tsc -p . --outDir out",
+    "watch-tests": "tsc -p . -w --outDir out",
+    "pretest": "pnpm run compile-tests && pnpm run compile && pnpm run lint",
+    "check-types": "tsc --noEmit",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.7",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.94.0",
+    "@typescript-eslint/eslint-plugin": "^8.3.0",
+    "@typescript-eslint/parser": "^8.3.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "esbuild": "^0.23.1",
+    "eslint": "^9.9.1",
+    "npm-run-all": "^4.1.5",
+    "typescript": "^5.5.4"
+  },
+  "dependencies": {
+    "minimatch": "^10.0.1"
+  }
+}
