@@ -2,6 +2,11 @@
 
 All notable changes to the [Structure Generator extension](https://marketplace.visualstudio.com/items?itemName=OmarAfet.structure-generator) will be documented in this file.
 
+## [1.1.1] - 2024-10-13
+
+### Fixed
+- Fixed a bug where empty directories were causing extra newlines in the generated structure output by ensuring only non-empty directories are formatted and displayed.
+
 ## [1.1.0] - 2024-10-13
 
 ### Added

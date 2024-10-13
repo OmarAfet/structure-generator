@@ -229,7 +229,7 @@ function formatTree(
       `${prefix}${connector}${child.name}${child.children ? "/" : ""}`
     );
 
-    if (child.children) {
+    if (child.children && child.children.length > 0) {
       lines.push(formatTree(child, childPrefix, false));
     }
   });
