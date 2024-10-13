@@ -1,12 +1,14 @@
 # Change Log
 
-All notable changes to the "structure-generator" extension will be documented in this file.
+All notable changes to the [Structure Generator extension](https://marketplace.visualstudio.com/items?itemName=OmarAfet.structure-generator) will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [1.0.8] - 2024-10-13
+
+Recreate the Extension with npm instead of pnpm.
 
 ## [1.0.7] - 2024-10-13
-
-Recreate the Extension with esbuild instead of webpack.
+	
+Recreate the Extension with esbuild & pnpm instead of webpack.
 
 ## [1.0.6] - 2024-10-13
 
