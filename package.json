@@ -2,7 +2,7 @@
   "name": "structure-generator",
   "displayName": "Structure Generator",
   "description": "Generates the current project's directory structure.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "publisher": "OmarAfet",
   "repository": {
     "type": "git",
@@ -58,6 +58,24 @@
           "type": "boolean",
           "default": true,
           "description": "Show include and exclude patterns at the top of the generated structure."
+        },
+        "structureGenerator.showFileContents": {
+          "type": "boolean",
+          "default": false,
+          "description": "Display file contents under the directory structure"
+        },
+        "structureGenerator.contentExclude": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "File patterns to exclude from content display"
+        },
+        "structureGenerator.omitLargeFiles": {
+          "type": "boolean",
+          "default": true,
+          "description": "Omit files larger than 50KB from content display. When disabled, files of any size will be shown (may impact performance)."
         }
       }
     }

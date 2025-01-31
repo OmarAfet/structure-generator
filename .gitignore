@@ -4,3 +4,4 @@ node_modules
 .vscode-test/
 *.vsix
 TODO.md
+package-lock.json
