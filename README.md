@@ -1,13 +1,17 @@
 # **Structure Generator**
 
-A Visual Studio Code extension that helps you generate and visualize your workspace's directory structure based on customizable include and exclude patterns.
+A Visual Studio Code extension that helps you generate and visualize your workspace's directory structure with advanced filtering and content display options.
 
 ## Features
 
-- **Directory Structure Generation:** Create a clear, textual representation of your project's directory structure in seconds.
-- **Customizable Filters:** Use flexible include and exclude patterns to control which files and directories are shown.
-- **Display Include/Exclude Patterns:** Optionally show the include and exclude patterns at the top of the generated structure for easy reference (can be disabled via settings).
-- **High Performance:** Optimized for handling even large projects quickly and efficiently.
+- **Directory Structure Generation:** Create a clear, textual representation of your project's directory structure in seconds
+- **File Content Display:** Optionally show file contents below the structure with syntax highlighting (enabled via settings)
+- **Smart Content Handling:** 
+  - Automatic omission of large files (>50KB) with guidance messages
+  - Configurable content exclusion patterns
+- **Customizable Filters:** Use flexible include/exclude patterns to control visibility
+- **Pattern Visibility:** Show include/exclude patterns in output (default enabled)
+- **High Performance:** Optimized for large projects with async operations
 
 ## Installation
 
@@ -15,20 +19,18 @@ You can install **Structure Generator** via the [Visual Studio Code Marketplace]
 
 ## Usage
 
-1. Open the workspace or folder you want to analyze in VS Code.
-2. (Optional) Adjust the include and exclude patterns to customize the output:
-   - Open **Settings** (`Ctrl + ,` or `Cmd + ,` on macOS).
-   - Navigate to **Extensions** > **Structure Generator**.
-   - Modify the **Exclude**, **Include**, and **Show Patterns** settings as required.
-3. Open the **Command Palette** (`Ctrl + Shift + P` or `Cmd + Shift + P` on macOS).
-4. Type `Structure Generator: Generate Project Structure` and press `Enter`.
-5. The generated directory structure will be displayed in a new text document based on your current configuration.
+1. Open the workspace/folder in VS Code
+2. Configure settings (optional):
+   - Open **Settings** (`Ctrl + ,` or `Cmd + ,`)
+   - Navigate to **Extensions** > **Structure Generator**
+   - Adjust patterns, content display, and omission settings
+3. Open **Command Palette** (`Ctrl + Shift + P`/`Cmd + Shift + P`)
+4. Run `Structure Generator: Generate Project Structure`
+5. Review generated structure with optional content
 
 ## Configuration
 
-You can configure **Structure Generator** using glob patterns to include or exclude specific files and directories.
-
-### Default Exclude & Include Patterns:
+### Core Settings
 
 ```json
 "structureGenerator.exclude": [
@@ -39,36 +41,27 @@ You can configure **Structure Generator** using glob patterns to include or excl
   "src/**", // Include everything within the "src" directory
   "src" // Ensure the "src" directory itself is included
 ]
+"structureGenerator.showPatterns": true
 ```
 
-### Show Patterns
-
-The extension can display the include and exclude patterns at the top of the generated structure. This is controlled by the `structureGenerator.showPatterns` setting, which defaults to `true`.
-
-You can disable this feature in the settings:
+### Content Display Settings
 
 ```json
-"structureGenerator.showPatterns": false
+"structureGenerator.showFileContents": false,
+"structureGenerator.omitLargeFiles": true,
+"structureGenerator.contentExclude": [
+  "**/package-lock.json",
+  "**/*.min.*",
+  "**/dist/**"
+]
 ```
 
-When enabled, the patterns will be shown in the output as follows:
+### Settings Explained
 
-```markdown
-### Exclude Patterns:
+1. **showFileContents** - Enable file content display (default: false)
+2. **omitLargeFiles** - Skip files >50KB (default: true)
+3. **contentExclude** - Patterns for files to exclude from content display
 
-- `node_modules`
-- `**/.*`
+## Example Output
 
-### Include Patterns:
-
-- `src/**`
-- `src`
-
-_You can disable this in `structureGenerator.showPatterns`_
-
----
-```
-
-Example Output:
-
-![image](https://github.com/user-attachments/assets/fe14ebc5-fcb2-473a-9901-e2e294d21a4e)
+![image](https://github.com/user-attachments/assets/bbbeb833-86e9-4e20-80ec-ede24587574a)

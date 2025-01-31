@@ -2,6 +2,23 @@
 
 All notable changes to the [Structure Generator extension](https://marketplace.visualstudio.com/items?itemName=OmarAfet.structure-generator) will be documented in this file.
 
+## [1.2.0] - 2025-01-31
+
+### Added
+
+- **File Content Display:** New `structureGenerator.showFileContents` setting (default: `false`) to show file contents with syntax highlighting
+- **Content Exclusion Patterns:** Added `structureGenerator.contentExclude` setting for pattern-based content omission
+- **Large File Handling:** New `structureGenerator.omitLargeFiles` setting (default: `true`) to skip files >50KB
+- **User Guidance:** Helpful comments in output when content is omitted, showing how to adjust settings
+- **Language Detection:** Automatic code block formatting based on file extensions
+
+### Changed
+
+- **Enhanced README:** Added documentation for new content display features and configuration options
+- **Performance Optimizations:** Asynchronous content loading with size limits for large projects
+- **Error Handling:** Improved file reading error messages with troubleshooting guidance
+- **Output Formatting:** Unified structure and content display in single Markdown document
+
 ## [1.1.1] - 2024-10-13
 
 ### Fixed
