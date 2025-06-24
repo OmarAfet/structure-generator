@@ -2,6 +2,12 @@
 
 All notable changes to the [Structure Generator extension](https://marketplace.visualstudio.com/items?itemName=OmarAfet.structure-generator) will be documented in this file.
 
+## [1.2.1] - 2025-06-24
+
+### Fixed
+
+- **Empty File Indication:** Fixed issue where empty files showed no content indication when `structureGenerator.showFileContents` was enabled. Empty files now display "(empty file)" to clearly indicate their empty status (fixes #3)
+
 ## [1.2.0] - 2025-01-31
 
 ### Added

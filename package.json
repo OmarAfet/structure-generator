@@ -2,7 +2,7 @@
   "name": "structure-generator",
   "displayName": "Structure Generator",
   "description": "Generates the current project's directory structure.",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "publisher": "OmarAfet",
   "repository": {
     "type": "git",
