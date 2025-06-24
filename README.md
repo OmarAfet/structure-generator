@@ -38,8 +38,7 @@ You can install **Structure Generator** via the [Visual Studio Code Marketplace]
   "**/.*" // Exclude hidden files and directories
 ],
 "structureGenerator.include": [
-  "src/**", // Include everything within the "src" directory
-  "src" // Ensure the "src" directory itself is included
+  "src/**" // Include everything within the "src" directory (parent directories automatically included)
 ]
 "structureGenerator.showPatterns": true
 ```
