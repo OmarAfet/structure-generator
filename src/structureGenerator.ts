@@ -50,7 +50,6 @@ export class StructureGenerator {
       console.error(`Error processing ${currentPath}:`, error);
     }
   }
-
   private async addFileContent(node: DirNode, fullPath: string, relPath: string) {
     if (this.config.shouldExcludeContent(relPath)) {
       node.content = "// Content omitted (excluded by patterns)";
@@ -67,7 +66,8 @@ export class StructureGenerator {
         return;
       }
 
-      node.content = Buffer.from(content).toString('utf8');
+      const contentString = Buffer.from(content).toString('utf8');
+      node.content = contentString.length === 0 ? "// This file is empty" : contentString;
     } catch (error) {
       node.content = `// Error reading file: ${error instanceof Error ? error.message : String(error)}`;
     }

@@ -18,13 +18,14 @@ export class Formatter {
     this.collectContentBlocks(node, blocks);
     return blocks.length > 0 ? `\n\n${blocks.join("\n\n")}` : "";
   }
-
   private static collectContentBlocks(node: DirNode, blocks: string[]) {
     if (node.filePath && node.content) {
       if (node.content.includes("excluded by patterns")) {
         blocks.push(`${node.filePath}\n${node.content}\n` + 
           `// Adjust patterns in settings: 'structureGenerator.contentExclude'`);
       } else if (node.content.includes("50KB limit")) {
+        blocks.push(`${node.filePath}\n${node.content}`);
+      } else if (node.content === "// This file is empty") {
         blocks.push(`${node.filePath}\n${node.content}`);
       } else {
         const ext = path.extname(node.filePath).slice(1);
