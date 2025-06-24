@@ -2,6 +2,12 @@
 
 All notable changes to the [Structure Generator extension](https://marketplace.visualstudio.com/items?itemName=OmarAfet.structure-generator) will be documented in this file.
 
+## [1.2.2] - 2025-06-24
+
+### Fixed
+
+- **Include Pattern Navigation:** Fixed issue where include patterns required all parent directories to be explicitly listed. Now when you include a specific file path like `"path/to/file.js"`, the extension automatically includes necessary parent directories for navigation while still respecting the include pattern filtering.
+
 ## [1.2.1] - 2025-06-24
 
 ### Fixed

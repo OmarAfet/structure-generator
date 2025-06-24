@@ -30,7 +30,15 @@ export class ConfigurationManager {
   shouldExclude(path: string): boolean {
     if (this.compiledInclude.length > 0 &&
       !this.compiledInclude.some(m => m.match(path))) {
-      return true;
+      const isParentOfIncluded = this.compiledInclude.some(m => {
+        const pattern = m.pattern;
+        const normalizedPath = path.replace(/\\/g, '/');
+        const normalizedPattern = pattern.replace(/\\/g, '/');
+        return normalizedPattern.startsWith(normalizedPath + '/');
+      });
+      if (!isParentOfIncluded) {
+        return true;
+      }
     }
     return this.compiledExclude.some(m => m.match(path));
   }
